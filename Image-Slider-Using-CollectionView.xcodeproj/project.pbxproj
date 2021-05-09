@@ -13,6 +13,7 @@
 		8496D14426481C5D00A68B3D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8496D14226481C5D00A68B3D /* Main.storyboard */; };
 		8496D14626481C6200A68B3D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8496D14526481C6200A68B3D /* Assets.xcassets */; };
 		8496D14926481C6200A68B3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8496D14726481C6200A68B3D /* LaunchScreen.storyboard */; };
+		8496D15526481D5F00A68B3D /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8496D15426481D5F00A68B3D /* SliderView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		8496D14526481C6200A68B3D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8496D14826481C6200A68B3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8496D14A26481C6200A68B3D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8496D15426481D5F00A68B3D /* SliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,15 +58,48 @@
 		8496D13B26481C5D00A68B3D /* Image-Slider-Using-CollectionView */ = {
 			isa = PBXGroup;
 			children = (
+				8496D15026481C6B00A68B3D /* Delegate */,
+				8496D15126481C7600A68B3D /* ViewController */,
+				8496D15226481C8300A68B3D /* Storyboard */,
+				8496D15326481C9300A68B3D /* Global */,
+			);
+			path = "Image-Slider-Using-CollectionView";
+			sourceTree = "<group>";
+		};
+		8496D15026481C6B00A68B3D /* Delegate */ = {
+			isa = PBXGroup;
+			children = (
 				8496D13C26481C5D00A68B3D /* AppDelegate.swift */,
 				8496D13E26481C5D00A68B3D /* SceneDelegate.swift */,
+			);
+			path = Delegate;
+			sourceTree = "<group>";
+		};
+		8496D15126481C7600A68B3D /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
 				8496D14026481C5D00A68B3D /* ViewController.swift */,
+				8496D15426481D5F00A68B3D /* SliderView.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		8496D15226481C8300A68B3D /* Storyboard */ = {
+			isa = PBXGroup;
+			children = (
 				8496D14226481C5D00A68B3D /* Main.storyboard */,
+			);
+			path = Storyboard;
+			sourceTree = "<group>";
+		};
+		8496D15326481C9300A68B3D /* Global */ = {
+			isa = PBXGroup;
+			children = (
 				8496D14526481C6200A68B3D /* Assets.xcassets */,
 				8496D14726481C6200A68B3D /* LaunchScreen.storyboard */,
 				8496D14A26481C6200A68B3D /* Info.plist */,
 			);
-			path = "Image-Slider-Using-CollectionView";
+			path = Global;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,6 +174,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8496D14126481C5D00A68B3D /* ViewController.swift in Sources */,
+				8496D15526481D5F00A68B3D /* SliderView.swift in Sources */,
 				8496D13D26481C5D00A68B3D /* AppDelegate.swift in Sources */,
 				8496D13F26481C5D00A68B3D /* SceneDelegate.swift in Sources */,
 			);
@@ -285,7 +321,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = "Image-Slider-Using-CollectionView/Info.plist";
+				INFOPLIST_FILE = "Image-Slider-Using-CollectionView/Global/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -302,7 +338,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = "Image-Slider-Using-CollectionView/Info.plist";
+				INFOPLIST_FILE = "Image-Slider-Using-CollectionView/Global/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
