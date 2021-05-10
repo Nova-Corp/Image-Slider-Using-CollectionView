@@ -8,9 +8,10 @@
 
 import UIKit
 
-struct Item {
+struct SliderItem {
     let id: String
     let itemUrl: String
+    let image: UIImage?
     let itemColor: String?
     let itemTitle: String?
     let itemDescription: String?
@@ -19,14 +20,32 @@ struct Item {
 
 class SliderView: UIView {
     
-    let items: [Item] = [
-        Item(id: "0", itemUrl: "", itemColor: nil, itemTitle: nil, itemDescription: nil),
-        Item(id: "1", itemUrl: "", itemColor: nil, itemTitle: nil, itemDescription: nil),
-        Item(id: "2", itemUrl: "", itemColor: nil, itemTitle: nil, itemDescription: nil),
-    ]
+    var timeInterval: Double! = 2.0
+    
+    var sliderItems: [SliderItem]! = [SliderItem]() {
+        didSet{
+            pageControl.numberOfPages = sliderItems.count
+        }
+    }
+    
+    private var currentSlide: Int! = 0 {
+        didSet{
+            let indexPath: IndexPath = IndexPath(item: currentSlide, section: 0)
+            collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+            pageControl.currentPage = currentSlide
+        }
+    }
+    
+    private let pageControl: UIPageControl = {
+        let pageControl = UIPageControl()
+        pageControl.isUserInteractionEnabled = false
+        pageControl.translatesAutoresizingMaskIntoConstraints = false
+        return pageControl
+    }()
+    
     
     // MARK:- Configure CollectionView
-    let collectionView: UICollectionView = {
+    private let collectionView: UICollectionView = {
         let collectionViewFlowLayout = UICollectionViewFlowLayout()
         collectionViewFlowLayout.scrollDirection = .horizontal
         collectionViewFlowLayout.minimumLineSpacing = 0
@@ -43,7 +62,7 @@ class SliderView: UIView {
     }()
     
     //MARK:- Control Buttons
-    let leftButton: UIButton = {
+    private let leftButton: UIButton = {
         let button = UIButton(type: .custom)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = .white
@@ -51,7 +70,7 @@ class SliderView: UIView {
         return button
     }()
     
-    let rightButton: UIButton = {
+    private let rightButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(systemName: "chevron.right"), for: .normal)
         button.tintColor = .white
@@ -70,7 +89,7 @@ class SliderView: UIView {
         
     }
     // MARK:- Configuration
-    func configureView() {
+    private func configureView() {
         backgroundColor = .white
         
         // CollectionView Delegate
@@ -91,14 +110,6 @@ class SliderView: UIView {
         
         collectionView.register(SliderImageCollectionViewCell.self,
                                 forCellWithReuseIdentifier: SliderImageCollectionViewCell.identifier)
-        
-        let pageControl: UIPageControl = {
-            let pageControl = UIPageControl()
-            pageControl.numberOfPages = items.count
-            pageControl.isUserInteractionEnabled = false
-            pageControl.translatesAutoresizingMaskIntoConstraints = false
-            return pageControl
-        }()
         
         addSubview(pageControl)
         NSLayoutConstraint.activate([
@@ -127,35 +138,43 @@ class SliderView: UIView {
         leftButton.addTarget(self, action: #selector(didTapLeftButton), for: .touchUpInside)
         rightButton.addTarget(self, action: #selector(didTapRightButton), for: .touchUpInside)
         
-    }
-    
-    @objc func didTapLeftButton() {
+        Timer.scheduledTimer(timeInterval: timeInterval,
+                             target: self,
+                             selector: #selector(didTapRightButton),
+                             userInfo: nil,
+                             repeats: true)
+        
+        
         
     }
     
-    @objc func didTapRightButton() {
-        
+    @objc private func didTapLeftButton() {
+        if currentSlide == 0 {
+            currentSlide = sliderItems.count - 1
+        }else{
+            currentSlide -= 1
+        }
     }
     
+    @objc private func didTapRightButton() {
+        if sliderItems.count > currentSlide + 1 {
+            currentSlide += 1
+        }else{
+            currentSlide = 0
+        }
+    }
 }
 
 extension SliderView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        items.count
+        sliderItems.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SliderImageCollectionViewCell.identifier,
                                                       for: indexPath) as! SliderImageCollectionViewCell
         
-        switch indexPath.item {
-        case 0:
-            cell.backgroundColor = .lightGray
-        case 1:
-            cell.backgroundColor = .green
-        default:
-            cell.backgroundColor = .blue
-        }
+        cell.itemView.setImage(from: sliderItems[indexPath.item].itemUrl, contentMode: .scaleAspectFill)
         
         return cell
         
@@ -169,8 +188,8 @@ extension SliderView: UICollectionViewDelegate, UICollectionViewDataSource, UICo
 class SliderImageCollectionViewCell: UICollectionViewCell {
     static let identifier: String = "SliderImageCollectionViewCell"
     
-    lazy var itemView: UIImageView = {
-        let itemView = UIImageView()
+    let itemView: SlideImageView = {
+        let itemView = SlideImageView()
         itemView.translatesAutoresizingMaskIntoConstraints = false
         return itemView
     }()
@@ -185,7 +204,7 @@ class SliderImageCollectionViewCell: UICollectionViewCell {
         configureView()
     }
     
-    func configureView() {
+    private func configureView() {
         addSubview(itemView)
         
         NSLayoutConstraint.activate([
@@ -194,5 +213,38 @@ class SliderImageCollectionViewCell: UICollectionViewCell {
             itemView.leadingAnchor.constraint(equalTo: leadingAnchor),
             itemView.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
+    }
+}
+
+
+
+class SlideImageView: UIImageView {
+    private let imageCache: NSCache<NSString, UIImage> = NSCache<NSString, UIImage>()
+    func setImage(from url: URL,
+                  contentMode mode: UIView.ContentMode = .scaleAspectFit) {
+        
+        contentMode = mode
+        if let imageCached = imageCache.object(forKey: url.absoluteString as NSString) {
+            image = imageCached
+            return
+        }else{
+            URLSession.shared.dataTask(with: url) { data, response, error in
+                guard
+                    let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 200,
+                    let mimeType = response?.mimeType, mimeType.hasPrefix("image"),
+                    let data = data, error == nil,
+                    let image = UIImage(data: data)
+                    else { return }
+                DispatchQueue.main.async() { [weak self] in
+                    self?.image = image
+                    self?.imageCache.setObject(image, forKey: url.absoluteString as NSString)
+                }
+            }.resume()
+        }
+    }
+    func setImage(from link: String,
+                  contentMode mode: UIView.ContentMode = .scaleAspectFit) {
+        guard let url = URL(string: link) else { return }
+        setImage(from: url, contentMode: mode)
     }
 }
